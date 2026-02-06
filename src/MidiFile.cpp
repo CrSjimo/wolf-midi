@@ -587,7 +587,7 @@ namespace Midi
     }
 
     // Read a 16-bit unsigned integer from the file stream
-    uint16_t read_uint16(std::ifstream *in) {
+    uint16_t read_uint16(std::istream *in) {
         unsigned char buffer[2];
         in->read(reinterpret_cast<char *>(buffer), 2);
         // Ensure the read operation was successful
@@ -598,7 +598,7 @@ namespace Midi
     }
 
     // Write a 16-bit unsigned integer to the file stream
-    void write_uint16(std::ofstream *out, const uint16_t value) {
+    void write_uint16(std::ostream *out, const uint16_t value) {
         unsigned char buffer[2];
         buffer[0] = static_cast<unsigned char>((value >> 8) & 0xFF); // high byte
         buffer[1] = static_cast<unsigned char>(value & 0xFF); // low byte
@@ -610,7 +610,7 @@ namespace Midi
     }
 
     // Read a 32-bit unsigned integer from the file stream
-    uint32_t read_uint32(std::ifstream *in) {
+    uint32_t read_uint32(std::istream *in) {
         unsigned char buffer[4];
         in->read(reinterpret_cast<char *>(buffer), 4);
         // Ensure the read operation was successful
@@ -624,7 +624,7 @@ namespace Midi
     }
 
     // Write a 32-bit unsigned integer to the file stream
-    void write_uint32(std::ofstream *out, const uint32_t value) {
+    void write_uint32(std::ostream *out, const uint32_t value) {
         unsigned char buffer[4];
         buffer[0] = static_cast<unsigned char>(value >> 24); // highest byte
         buffer[1] = static_cast<unsigned char>((value >> 16) & 0xFF);
@@ -638,7 +638,7 @@ namespace Midi
     }
 
     // Read a variable-length quantity (VLQ) from the file stream
-    uint32_t read_variable_length_quantity(std::ifstream &in) {
+    uint32_t read_variable_length_quantity(std::istream &in) {
         unsigned char b;
         uint32_t value = 0;
         do {
@@ -654,7 +654,7 @@ namespace Midi
     }
 
     // Write a variable-length quantity (VLQ) to the file stream
-    void write_variable_length_quantity(std::ofstream &out, uint32_t value) {
+    void write_variable_length_quantity(std::ostream &out, uint32_t value) {
         unsigned char buffer[4];
         int offset = 3;
 
@@ -689,7 +689,7 @@ namespace Midi
         return load(in);
     }
 
-    bool MidiFile::load(std::ifstream &in) {
+    bool MidiFile::load(std::istream &in) {
         fDisableSort = true;
         unsigned char chunk_id[4], division_type_and_resolution[4];
         uint32_t chunk_size, chunk_start;
@@ -947,7 +947,7 @@ namespace Midi
         return save(out);
     }
 
-    bool MidiFile::save(std::ofstream &out) {
+    bool MidiFile::save(std::ostream &out) {
         // Write header chunk ("MThd")
         out.write("MThd", 4);
         write_uint32(&out, 6); // Header size
