@@ -120,7 +120,9 @@ namespace Midi
 
         void clear();
         bool load(const std::filesystem::path &filename);
+        bool load(std::ifstream &in);
         bool save(const std::filesystem::path &filename);
+        bool save(std::ofstream &out);
 
         MidiFile *oneTrackPerVoice() const;
 

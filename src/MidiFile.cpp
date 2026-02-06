@@ -686,7 +686,10 @@ namespace Midi
         if (!in.is_open()) {
             return false;
         }
+        return load(in);
+    }
 
+    bool MidiFile::load(std::ifstream &in) {
         fDisableSort = true;
         unsigned char chunk_id[4], division_type_and_resolution[4];
         uint32_t chunk_size, chunk_start;
@@ -700,7 +703,6 @@ namespace Midi
         if (memcmp(chunk_id, reinterpret_cast<void const *>("RIFF"), 4) == 0) {
             in.read(reinterpret_cast<char *>(chunk_id), 4);
             if (memcmp(chunk_id, reinterpret_cast<void const *>("RMID"), 4) != 0) {
-                in.close();
                 fDisableSort = false;
                 return false;
             }
@@ -709,7 +711,6 @@ namespace Midi
             chunk_size = read_uint32(&in);
 
             if (memcmp(chunk_id, reinterpret_cast<void const *>("data"), 4) != 0) {
-                in.close();
                 fDisableSort = false;
                 return false;
             }
@@ -721,7 +722,6 @@ namespace Midi
 
         // Main chunk processing
         if (memcmp(chunk_id, reinterpret_cast<void const *>("MThd"), 4) != 0) {
-            in.close();
             fDisableSort = false;
             return false;
         }
@@ -789,7 +789,6 @@ namespace Midi
                     }
 
                     if (in.tellg() == previous_pos) {
-                        in.close();
                         fDisableSort = false;
                         sort();
                         return false;
@@ -916,7 +915,6 @@ namespace Midi
 
                 number_of_tracks_read++;
             } else {
-                in.close();
                 fDisableSort = false;
                 sort();
                 return false;
@@ -927,7 +925,6 @@ namespace Midi
             in.seekg(chunk_start + chunk_size);
         }
 
-        in.close();
         fDisableSort = false;
         sort();
         return true;
@@ -947,7 +944,10 @@ namespace Midi
         if (!out.is_open()) {
             return false;
         }
+        return save(out);
+    }
 
+    bool MidiFile::save(std::ofstream &out) {
         // Write header chunk ("MThd")
         out.write("MThd", 4);
         write_uint32(&out, 6); // Header size
@@ -1065,8 +1065,6 @@ namespace Midi
 
             out.seekp(track_end_offset); // Return to the end of the track
         }
-
-        out.close();
         return true;
     }
 } // namespace Midi
